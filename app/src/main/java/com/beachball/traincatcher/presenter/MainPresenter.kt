@@ -6,9 +6,12 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import com.beachball.traincatcher.interactor.ArrivalInteractor
 import com.beachball.traincatcher.model.Arrival
+import com.beachball.traincatcher.util.DateUtil
 import com.beachball.traincatcher.view.MainView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainPresenter(private var mainView: MainView?) {
 
@@ -80,8 +83,15 @@ class MainPresenter(private var mainView: MainView?) {
             list.sortBy {
                 it.timeToStation
             }
-            mainView?.presentNextArrival(list[0].timeToStation)
+            mainView?.presentNextArrival(calculateRemainingMinutes(list[0].expectedArrival))
         }
+    }
+
+    private fun calculateRemainingMinutes(expectedArrival: String): Int {
+        val cal = DateUtil.convertToCalendar(expectedArrival)
+        cal.add(Calendar.HOUR_OF_DAY, 1)
+        val currentCal = Calendar.getInstance()
+        return TimeUnit.MILLISECONDS.toSeconds(Math.abs(cal.timeInMillis - currentCal.timeInMillis)).toInt()
     }
 
     fun onDestroy() {

@@ -28,44 +28,8 @@ class MainFragment : Fragment(), MainView {
     override fun presentNextArrival(timeLeft: Int) {
         val minutes = timeLeft / 60
         main_text.text = String.format("%d", minutes)
-        val handler = Handler()
-        val specialRunnable = Runnable {
-            specialVibrationJob()
-        }
-        val runnable = Runnable {
-            vibrationJob()
-        }
-        if(minutes == 0) {
-            for (i in 1..5) {
-                val timer: Number = 250 * i
-                handler.postDelayed(specialRunnable, timer.toLong())
-            }
-        } else {
-            for (i in 1..minutes) {
-                val timer: Number = 1000 * i
-                handler.postDelayed(runnable, timer.toLong())
-            }
-        }
-    }
-
-    private fun specialVibrationJob() {
         val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(250)
-        }
-    }
-
-    private fun vibrationJob() {
-        val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(750, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(750)
-        }
+        presenter.startJob(minutes, vibrator)
     }
 
     override fun onDestroy() {

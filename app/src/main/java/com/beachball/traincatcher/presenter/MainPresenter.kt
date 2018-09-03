@@ -25,6 +25,7 @@ class MainPresenter(private var mainView: MainView?) {
 
     private val interactor: ArrivalInteractor = ArrivalInteractor()
     private val list: MutableList<Arrival> = ArrayList()
+    private val handler = Handler()
 
     fun getArrivals() {
         interactor.getArrivalsByStationId(TEST_STATION_ID)
@@ -40,7 +41,6 @@ class MainPresenter(private var mainView: MainView?) {
     }
 
     fun startJob(minutes: Int, vibrator: Vibrator?) {
-        val handler = Handler()
         val specialRunnable = Runnable {
             specialVibrationJob(vibrator)
         }
@@ -57,6 +57,29 @@ class MainPresenter(private var mainView: MainView?) {
                 val timer: Number = (LONG_BUZZ + WAIT_TIME) * i
                 handler.postDelayed(runnable, timer.toLong())
             }
+        }
+    }
+
+    fun startCountdownJob(seconds: Int, vibrator: Vibrator?) {
+        val runnable = Runnable {
+            countdownJob(seconds, vibrator)
+        }
+        handler.postDelayed(runnable, 1000)
+    }
+
+    private fun countdownJob(seconds: Int, vibrator: Vibrator?) {
+        val newSeconds = seconds - 1
+        if(newSeconds % 60 == 0) {
+            mainView?.presentSecondsLeft(newSeconds)
+            startJob(newSeconds / 60, vibrator)
+        }
+        if(newSeconds <= 0) {
+            mainView?.presentSecondsLeft(newSeconds)
+        } else {
+            val runnable = Runnable {
+                countdownJob(newSeconds, vibrator)
+            }
+            handler.postDelayed(runnable, 1000)
         }
     }
 
@@ -83,7 +106,9 @@ class MainPresenter(private var mainView: MainView?) {
             list.sortBy {
                 it.timeToStation
             }
-            mainView?.presentNextArrival(calculateRemainingMinutes(list[0].expectedArrival))
+            val minutes = calculateRemainingMinutes(list[0].expectedArrival) / 60
+            val minutesStr = String.format("%d", minutes)
+            mainView?.presentNextArrival(minutesStr)
         }
     }
 

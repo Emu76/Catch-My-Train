@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Catch My Train</string>
+    <string name="arrival">Train arrived!</string>
 </resources>

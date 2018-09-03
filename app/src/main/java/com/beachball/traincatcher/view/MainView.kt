@@ -2,7 +2,9 @@ package com.beachball.traincatcher.view
 
 interface MainView {
 
-    fun presentNextArrival(timeLeft: Int)
+    fun presentInitialTime(timeLeft: Int)
+
+    fun presentNextMinute(timeLeft: Int)
 
     fun presentTrainArrived()
 }

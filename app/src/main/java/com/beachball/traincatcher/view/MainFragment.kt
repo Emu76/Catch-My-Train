@@ -25,12 +25,21 @@ class MainFragment : Fragment(), MainView {
         presenter.getArrivals()
     }
 
-    override fun presentNextArrival(timeLeft: Int) {
+    override fun presentInitialTime(timeLeft: Int) {
+        val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+        presentTimeAndVibrate(timeLeft)
+        presenter.startCountdownJob(timeLeft, vibrator)
+    }
+
+    override fun presentNextMinute(timeLeft: Int) {
+        presentTimeAndVibrate(timeLeft)
+    }
+
+    private fun presentTimeAndVibrate(timeLeft: Int) {
         val minutes = timeLeft / 60
-        main_text.text = String.format("%d " + getString(R.string.minutes_remaining), minutes)
+        main_text.text = String.format(getString(R.string.more_than) + " %d " + getString(R.string.minutes_remaining), minutes)
         val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
         presenter.startVibrationJob(minutes, vibrator)
-        presenter.startCountdownJob(timeLeft, vibrator)
     }
 
     override fun presentTrainArrived() {

@@ -70,7 +70,7 @@ class MainPresenter(private var mainView: MainView?) {
     private fun countdownJob(seconds: Int, vibrator: Vibrator?) {
         val newSeconds = seconds - 1
         if(newSeconds % 60 == 0) {
-            mainView?.presentNextArrival(seconds)
+            mainView?.presentNextMinute(seconds)
         }
         if(newSeconds <= 0) {
             mainView?.presentTrainArrived()
@@ -105,7 +105,7 @@ class MainPresenter(private var mainView: MainView?) {
             list.sortBy {
                 it.timeToStation
             }
-            mainView?.presentNextArrival(calculateRemainingSeconds(list[0].expectedArrival))
+            mainView?.presentInitialTime(calculateRemainingSeconds(list[0].expectedArrival))
         }
     }
 

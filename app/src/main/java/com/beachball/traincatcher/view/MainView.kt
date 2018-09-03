@@ -7,4 +7,6 @@ interface MainView {
     fun presentNextMinute(timeLeft: Int)
 
     fun presentTrainArrived()
+
+    fun presentLoading()
 }

@@ -27,10 +27,14 @@ class MainPresenter(private var mainView: MainView?) {
     private val list: MutableList<Arrival> = ArrayList()
     private val handler = Handler()
 
-    fun getArrivals() {
-        interactor.getArrivalsByStationId(TEST_STATION_ID)
+    fun getArrivals(stationCode: String) {
+        list.clear()
+        interactor.getArrivalsByStationId(stationCode)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    mainView?.presentLoading()
+                }
                 .subscribe({
                     list.add(it)
                 } , {

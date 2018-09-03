@@ -8,7 +8,6 @@
         android:id="@+id/main_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,21 +23,25 @@
         android:gravity="center_horizontal">
 
         <Button
+            android:id="@+id/btn_canonbury"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_canonbury" />
 
         <Button
+            android:id="@+id/btn_stratford"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_stratford_dlr" />
 
         <Button
+            android:id="@+id/btn_stratford_intl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_stratford_intl" />
 
         <Button
+            android:id="@+id/btn_canary_wharf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_canary_wharf_dlr" />

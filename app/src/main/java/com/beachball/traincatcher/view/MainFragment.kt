@@ -22,7 +22,22 @@ class MainFragment : Fragment(), MainView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.getArrivals()
+
+        btn_canonbury.setOnClickListener {
+            presenter.getArrivals("910GCNNB")
+        }
+
+        btn_canary_wharf.setOnClickListener {
+            presenter.getArrivals("9400ZZDLCAN1")
+        }
+
+        btn_stratford.setOnClickListener {
+            presenter.getArrivals("9400ZZDLSTD1")
+        }
+
+        btn_stratford_intl.setOnClickListener {
+            presenter.getArrivals("940GZZDLSIT")
+        }
     }
 
     override fun presentInitialTime(timeLeft: Int) {
@@ -44,6 +59,10 @@ class MainFragment : Fragment(), MainView {
 
     override fun presentTrainArrived() {
         main_text.text = getString(R.string.arrival)
+    }
+
+    override fun presentLoading() {
+        main_text.text = getString(R.string.loading)
     }
 
     override fun onDestroy() {

@@ -2,6 +2,7 @@
     <string name="app_name">Catch My Train</string>
     <string name="arrival">Train arrived!</string>
     <string name="more_than">More than</string>
+    <string name="loading">Getting info…</string>
     <string name="minutes_remaining">minutes remaining</string>
     <string name="btn_canonbury">Canonbury</string>
     <string name="btn_stratford_intl">Stratford International</string>

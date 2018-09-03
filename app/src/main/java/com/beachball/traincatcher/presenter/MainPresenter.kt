@@ -40,7 +40,7 @@ class MainPresenter(private var mainView: MainView?) {
         )
     }
 
-    fun startJob(minutes: Int, vibrator: Vibrator?) {
+    fun startVibrationJob(minutes: Int, vibrator: Vibrator?) {
         val specialRunnable = Runnable {
             specialVibrationJob(vibrator)
         }
@@ -70,11 +70,10 @@ class MainPresenter(private var mainView: MainView?) {
     private fun countdownJob(seconds: Int, vibrator: Vibrator?) {
         val newSeconds = seconds - 1
         if(newSeconds % 60 == 0) {
-            mainView?.presentSecondsLeft(newSeconds)
-            startJob(newSeconds / 60, vibrator)
+            mainView?.presentNextArrival(seconds)
         }
         if(newSeconds <= 0) {
-            mainView?.presentSecondsLeft(newSeconds)
+            mainView?.presentTrainArrived()
         } else {
             val runnable = Runnable {
                 countdownJob(newSeconds, vibrator)
@@ -106,13 +105,11 @@ class MainPresenter(private var mainView: MainView?) {
             list.sortBy {
                 it.timeToStation
             }
-            val minutes = calculateRemainingMinutes(list[0].expectedArrival) / 60
-            val minutesStr = String.format("%d", minutes)
-            mainView?.presentNextArrival(minutesStr)
+            mainView?.presentNextArrival(calculateRemainingSeconds(list[0].expectedArrival))
         }
     }
 
-    private fun calculateRemainingMinutes(expectedArrival: String): Int {
+    private fun calculateRemainingSeconds(expectedArrival: String): Int {
         val cal = DateUtil.convertToCalendar(expectedArrival)
         cal.add(Calendar.HOUR_OF_DAY, 1)
         val currentCal = Calendar.getInstance()

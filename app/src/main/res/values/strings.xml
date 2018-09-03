@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Catch My Train</string>
     <string name="arrival">Train arrived!</string>
+    <string name="minutes_remaining">Minutes remaining</string>
+    <string name="btn_canonbury">Canonbury</string>
+    <string name="btn_stratford_intl">Stratford International</string>
+    <string name="btn_stratford_dlr">Stratford DLR</string>
+    <string name="btn_canary_wharf_dlr">Canary Wharf DLR</string>
 </resources>

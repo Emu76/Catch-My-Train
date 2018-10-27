@@ -30,10 +30,15 @@ class ArrivalInteractor {
         service = retrofit.create<ApiInterface>(ApiInterface::class.java)
     }
 
-    fun getArrivalsByStationId(stationId: String): Flowable<Arrival> {
+    fun getArrivalsByStationId(stationId: String, destinationName: String): Single<List<Arrival>> {
         return service.getArrivalById(stationId, false)
                 .flatMapPublisher {
                     Flowable.fromIterable(it)
-        }
+                }
+                .filter {
+                    it.destinationName.contains(destinationName)
+                }
+                .map { it }
+                .toList()
     }
 }

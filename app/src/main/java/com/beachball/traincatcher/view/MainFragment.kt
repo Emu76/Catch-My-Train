@@ -1,6 +1,7 @@
 package com.beachball.traincatcher.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.*
 import android.support.v4.app.Fragment
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.beachball.traincatcher.presenter.MainPresenter
 import com.beachball.traincatcher.R
+import com.beachball.traincatcher.service.CountdownService
 import kotlinx.android.synthetic.main.fragment_main.*
 
 
@@ -24,19 +26,19 @@ class MainFragment : Fragment(), MainView {
         super.onViewCreated(view, savedInstanceState)
 
         btn_canonbury.setOnClickListener {
-            presenter.getArrivals("910GCNNB")
+            presenter.getArrivals("910GCNNB", "Stratford")
         }
 
         btn_canary_wharf.setOnClickListener {
-            presenter.getArrivals("9400ZZDLCAN1")
+            presenter.getArrivals("9400ZZDLCAN1", "Stratford")
         }
 
         btn_stratford.setOnClickListener {
-            presenter.getArrivals("9400ZZDLSTD1")
+            presenter.getArrivals("9400ZZDLSTD1", "Stratford International")
         }
 
         btn_stratford_intl.setOnClickListener {
-            presenter.getArrivals("940GZZDLSIT")
+            presenter.getArrivals("940GZZDLSIT", "Woolwich")
         }
     }
 
@@ -45,7 +47,14 @@ class MainFragment : Fragment(), MainView {
         main_text.text = String.format(getString(R.string.more_than) + " %d " + getString(R.string.minutes_remaining), minutes)
         val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
         presenter.startVibrationJob(minutes, vibrator)
-        presenter.startCountdownJob(timeLeft, vibrator)
+        //presenter.startCountdownJob(timeLeft, vibrator)
+        val intent = Intent(context, CountdownService::class.java)
+        intent.putExtra("timeLeft", timeLeft)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context?.startForegroundService(intent)
+        } else {
+            context?.startService(intent)
+        }
     }
 
     override fun presentNextMinute(timeLeft: Int) {

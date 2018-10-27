@@ -9,6 +9,7 @@ import com.beachball.traincatcher.model.Arrival
 import com.beachball.traincatcher.util.DateUtil
 import com.beachball.traincatcher.view.MainView
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -24,24 +25,23 @@ class MainPresenter(private var mainView: MainView?) {
     }
 
     private val interactor: ArrivalInteractor = ArrivalInteractor()
-    private val list: MutableList<Arrival> = ArrayList()
+    private lateinit var list: List<Arrival>
     private val handler = Handler()
+    private val cd: CompositeDisposable = CompositeDisposable()
 
-    fun getArrivals(stationCode: String) {
-        list.clear()
-        interactor.getArrivalsByStationId(stationCode)
+    fun getArrivals(stationCode: String, destinationName: String) {
+        cd.add(interactor.getArrivalsByStationId(stationCode, destinationName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     mainView?.presentLoading()
                 }
                 .subscribe({
-                    list.add(it)
-                } , {
-                } , {
+                    list = it
                     sortList()
+                }, {
                 }
-        )
+        ))
     }
 
     fun startVibrationJob(minutes: Int, vibrator: Vibrator?) {
@@ -105,8 +105,8 @@ class MainPresenter(private var mainView: MainView?) {
     }
 
     private fun sortList() {
-        if(list.size > 0) {
-            list.sortBy {
+        if(list.isNotEmpty()) {
+            list = list.sortedBy {
                 it.timeToStation
             }
             mainView?.presentInitialTime(calculateRemainingSeconds(list[0].expectedArrival))
@@ -122,5 +122,6 @@ class MainPresenter(private var mainView: MainView?) {
 
     fun onDestroy() {
         mainView = null
+        cd.dispose()
     }
 }

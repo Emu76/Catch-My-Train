@@ -8,4 +8,5 @@
     <string name="btn_stratford_intl">Stratford International</string>
     <string name="btn_stratford_dlr">Stratford DLR</string>
     <string name="btn_canary_wharf_dlr">Canary Wharf DLR</string>
+    <string name="app_scheme">www.beachballstudios.com</string>
 </resources>

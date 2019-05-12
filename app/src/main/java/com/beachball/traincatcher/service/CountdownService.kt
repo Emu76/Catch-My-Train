@@ -4,7 +4,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import com.beachball.traincatcher.R
 import android.app.PendingIntent
@@ -16,10 +15,15 @@ class CountdownService : Service() {
         private const val SHORT_BUZZ: Long = 250
         private const val WAIT_TIME: Long = 500
         private const val QUICK_BUZZ_NUM = 5
+        private const val NOTIFICATION_CODE = 1338
+        private const val CHANNEL_ID = "channel_01"
+        const val STATION_NAME = "stationName"
+        const val TIME_LEFT = "timeLeft"
+        private const val WAKE_LOCK_TAG = "TrainCatcher::WakelockTag"
     }
 
     private val handler = Handler()
-    private var integer = 0
+    private var secondsLeft = 0
     private var stationName = ""
     private lateinit var wakeLock: PowerManager.WakeLock
 
@@ -28,36 +32,32 @@ class CountdownService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        integer = intent.getIntExtra("timeLeft", 0)
-        stationName = intent.getStringExtra("stationName")
-        startCountdownJob(integer)
+        secondsLeft = intent.getIntExtra(TIME_LEFT, 0)
+        stationName = intent.getStringExtra(STATION_NAME)
+        startCountdownJob(secondsLeft)
         return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Countdown channel"
-            // Create the channel for the notification
-            val mChannel = NotificationChannel("channel_01", name, NotificationManager.IMPORTANCE_LOW)
+        val name = getString(R.string.countdown_channel)
+        // Create the channel for the notification
+        val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
 
-            // Set the Notification Channel for the Notification Manager.
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(mChannel)
+        // Set the Notification Channel for the Notification Manager.
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
 
-            val t = object : Thread() {
-                override fun run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForeground(1338,
-                                buildForegroundNotification())
-                    }
-                }
+        val t = object : Thread() {
+            override fun run() {
+                updateNotification(secondsLeft)
             }
-            t.start()
         }
+        t.start()
+        //Acquire wakelock with 20 minute timeout
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                    newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TrainCatcher::WakelockTag").apply {
+                    newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG).apply {
                         acquire(1200000)
                     }
                 }
@@ -112,21 +112,11 @@ class CountdownService : Service() {
     }
 
     private fun specialVibrationJob(vibrator: Vibrator?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(SHORT_BUZZ, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(SHORT_BUZZ)
-        }
+        vibrator?.vibrate(VibrationEffect.createOneShot(SHORT_BUZZ, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
     private fun vibrationJob(vibrator: Vibrator?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(LONG_BUZZ, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(LONG_BUZZ)
-        }
+        vibrator?.vibrate(VibrationEffect.createOneShot(LONG_BUZZ, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
     private fun updateNotification(minutes: Int) {
@@ -134,52 +124,17 @@ class CountdownService : Service() {
         val activityPendingIntent = PendingIntent.getBroadcast(this,
                 System.currentTimeMillis().toInt(),
                 intentHide, 0)
-        val builder = NotificationCompat.Builder(this)
-                .addAction(android.R.drawable.stat_notify_chat, "Cancel countdown",
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .addAction(android.R.drawable.stat_notify_chat, getString(R.string.countdown_cancel),
                         activityPendingIntent)
                 .setContentText(stationName)
-                .setContentTitle(String.format("Your train leaves in %d minutes", minutes))
+                .setContentTitle(String.format(getString(R.string.countdown_str), minutes))
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_train)
                 .setVibrate(null)
                 .setWhen(System.currentTimeMillis())
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId("channel_01") // Channel ID
-        }
-
-        startForeground(1338, builder.build())
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun buildForegroundNotification(): Notification {
-        // The PendingIntent that leads to a call to onStartCommand() in this service.
-        //val servicePendingIntent = PendingIntent.getService(this, 0, intent,
-        //        PendingIntent.FLAG_UPDATE_CURRENT)
-
-        // The PendingIntent to launch activity.
-        val intentHide = Intent(this, StopServiceReceiver::class.java)
-        val activityPendingIntent = PendingIntent.getBroadcast(this,
-                System.currentTimeMillis().toInt(),
-                intentHide, 0)
-
-        val builder = NotificationCompat.Builder(this)
-                .addAction(android.R.drawable.stat_notify_chat, "Cancel countdown",
-                        activityPendingIntent)
-                .setContentText(stationName)
-                .setContentTitle("Your train leaves in 4 minutes")
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setSmallIcon(R.drawable.ic_train)
-                .setVibrate(null)
-                .setWhen(System.currentTimeMillis())
-
-        // Set the Channel ID for Android O.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId("channel_01") // Channel ID
-        }
-
-        return builder.build()
+        startForeground(NOTIFICATION_CODE, builder.build())
     }
 }

@@ -42,7 +42,7 @@ class MainFragment : Fragment(), MainView {
         }
     }
 
-    override fun presentInitialTime(timeLeft: Int) {
+    override fun presentInitialTime(timeLeft: Int, stationName: String) {
         val minutes = timeLeft / 60
         main_text.text = String.format(getString(R.string.more_than) + " %d " + getString(R.string.minutes_remaining), minutes)
         val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
@@ -50,6 +50,7 @@ class MainFragment : Fragment(), MainView {
         //presenter.startCountdownJob(timeLeft, vibrator)
         val intent = Intent(context, CountdownService::class.java)
         intent.putExtra("timeLeft", timeLeft)
+        intent.putExtra("stationName",stationName)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context?.startForegroundService(intent)
         } else {

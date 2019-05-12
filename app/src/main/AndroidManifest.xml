@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="false">
         <service android:name=".service.CountdownService" />
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,6 +29,9 @@
 
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".service.StopServiceReceiver"
+            android:enabled="true"/>
     </application>
 
 </manifest>

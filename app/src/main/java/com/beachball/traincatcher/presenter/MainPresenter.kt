@@ -38,7 +38,7 @@ class MainPresenter(private var mainView: MainView?) {
                 }
                 .subscribe({
                     list = it
-                    sortList()
+                    sortList(destinationName)
                 }, {
                 }
         ))
@@ -104,12 +104,12 @@ class MainPresenter(private var mainView: MainView?) {
         }
     }
 
-    private fun sortList() {
+    private fun sortList(stationName: String) {
         if(list.isNotEmpty()) {
             list = list.sortedBy {
                 it.timeToStation
             }
-            mainView?.presentInitialTime(calculateRemainingSeconds(list[0].expectedArrival))
+            mainView?.presentInitialTime(calculateRemainingSeconds(list[0].expectedArrival), stationName)
         }
     }
 

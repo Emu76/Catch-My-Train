@@ -6,7 +6,7 @@ import java.util.*
 class DateUtil() {
 
     companion object {
-        private const val DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss'Z'"
+        private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         private val formatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
 
         fun convertToCalendar(dateStr: String): Calendar {

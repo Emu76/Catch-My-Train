@@ -1,8 +1,9 @@
-package com.beachball.traincatcher.view
+package com.beachball.traincatcher.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.beachball.traincatcher.R
+import com.beachball.traincatcher.view.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.*
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
-import com.beachball.traincatcher.view.MainActivity
+import com.beachball.traincatcher.R
 
 class CountdownService : Service() {
 
@@ -19,6 +19,7 @@ class CountdownService : Service() {
 
     private val handler = Handler()
     private var integer = 0
+    private var stationName = ""
     private lateinit var wakeLock: PowerManager.WakeLock
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -26,7 +27,8 @@ class CountdownService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        integer = intent.extras!!.get("timeLeft") as Int
+        integer = intent.getIntExtra("timeLeft", 0)
+        stationName = intent.getStringExtra("stationName")
         startCountdownJob(integer)
         return START_STICKY
     }
@@ -54,10 +56,15 @@ class CountdownService : Service() {
             t.start()
         }
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                    newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
-                        acquire()
+                    newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TrainCatcher::WakelockTag").apply {
+                        acquire(1200000)
                     }
                 }
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 
     private fun startCountdownJob(seconds: Int) {
@@ -127,18 +134,19 @@ class CountdownService : Service() {
         //        PendingIntent.FLAG_UPDATE_CURRENT)
 
         // The PendingIntent to launch activity.
-        val activityPendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, MainActivity::class.java), 0)
+        val intentHide = Intent(this, StopServiceReceiver::class.java)
+        val activityPendingIntent = PendingIntent.getBroadcast(this,
+                System.currentTimeMillis().toInt(),
+                intentHide, 0)
 
         val builder = NotificationCompat.Builder(this)
                 .addAction(android.R.drawable.stat_notify_chat, "Cancel countdown",
                         activityPendingIntent)
-                .setContentText("Content text")
-                .setContentTitle("Content title")
+                .setContentText(stationName)
+                .setContentTitle("Your train leaves in 4 minutes")
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setSmallIcon(android.R.drawable.stat_notify_sync_noanim)
-                .setTicker("Testing1234")
+                .setSmallIcon(R.drawable.ic_train)
                 .setWhen(System.currentTimeMillis())
 
         // Set the Channel ID for Android O.

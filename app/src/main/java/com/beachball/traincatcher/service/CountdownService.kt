@@ -7,6 +7,7 @@ import android.os.*
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import com.beachball.traincatcher.R
+import android.app.PendingIntent
 
 class CountdownService : Service() {
 
@@ -39,7 +40,7 @@ class CountdownService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Countdown channel"
             // Create the channel for the notification
-            val mChannel = NotificationChannel("channel_01", name, NotificationManager.IMPORTANCE_DEFAULT)
+            val mChannel = NotificationChannel("channel_01", name, NotificationManager.IMPORTANCE_LOW)
 
             // Set the Notification Channel for the Notification Manager.
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -79,6 +80,7 @@ class CountdownService : Service() {
         val newSeconds = seconds - 1
         if(newSeconds % 60 == 0) {
             startVibrationJob(seconds / 60, vibrator)
+            updateNotification(seconds / 60)
         }
         if(newSeconds > 0) {
             val runnable = Runnable {
@@ -127,6 +129,29 @@ class CountdownService : Service() {
         }
     }
 
+    private fun updateNotification(minutes: Int) {
+        val intentHide = Intent(this, StopServiceReceiver::class.java)
+        val activityPendingIntent = PendingIntent.getBroadcast(this,
+                System.currentTimeMillis().toInt(),
+                intentHide, 0)
+        val builder = NotificationCompat.Builder(this)
+                .addAction(android.R.drawable.stat_notify_chat, "Cancel countdown",
+                        activityPendingIntent)
+                .setContentText(stationName)
+                .setContentTitle(String.format("Your train leaves in %d minutes", minutes))
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSmallIcon(R.drawable.ic_train)
+                .setVibrate(null)
+                .setWhen(System.currentTimeMillis())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId("channel_01") // Channel ID
+        }
+
+        startForeground(1338, builder.build())
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun buildForegroundNotification(): Notification {
         // The PendingIntent that leads to a call to onStartCommand() in this service.
@@ -147,6 +172,7 @@ class CountdownService : Service() {
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_train)
+                .setVibrate(null)
                 .setWhen(System.currentTimeMillis())
 
         // Set the Channel ID for Android O.

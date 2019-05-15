@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment(), MainView {
 
-    private val presenter: MainPresenter = MainPresenter(this)
+    private lateinit var presenter: MainPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -23,6 +23,9 @@ class MainFragment : Fragment(), MainView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        presenter = MainPresenter(this,
+                getString(R.string.tfl_app_id), getString(R.string.tfl_app_key))
 
         btn_canonbury.setOnClickListener {
             presenter.getArrivals("910GCNNB", "Stratford")

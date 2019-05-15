@@ -11,7 +11,8 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class MainPresenter(private var mainView: MainView?) {
+class MainPresenter(private var mainView: MainView?,
+                    private val appId: String, private val appKey: String) {
 
     private val interactor: ArrivalInteractor = ArrivalInteractor()
     private lateinit var list: List<Arrival>
@@ -19,7 +20,7 @@ class MainPresenter(private var mainView: MainView?) {
     private val cd: CompositeDisposable = CompositeDisposable()
 
     fun getArrivals(stationCode: String, destinationName: String) {
-        cd.add(interactor.getArrivalsByStationId(stationCode, destinationName)
+        cd.add(interactor.getArrivalsByStationId(stationCode, destinationName, appId, appKey)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {

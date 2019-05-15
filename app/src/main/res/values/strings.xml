@@ -12,4 +12,7 @@
     <string name="countdown_str">"Your train leaves in %d minutes"</string>
     <string name="countdown_cancel">Cancel countdown</string>
     <string name="countdown_channel">Countdown notifications</string>
+
+    <string name="tfl_app_id">_</string>
+    <string name="tfl_app_key">_</string>
 </resources>

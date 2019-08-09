@@ -15,7 +15,7 @@ class MainPresenter(private var mainView: MainView?,
                     private val appId: String, private val appKey: String) {
 
     private val interactor: ArrivalInteractor = ArrivalInteractor()
-    private lateinit var list: List<Arrival>
+    lateinit var list: List<Arrival>
     private val handler = Handler()
     private val cd: CompositeDisposable = CompositeDisposable()
 
@@ -56,7 +56,7 @@ class MainPresenter(private var mainView: MainView?,
         }
     }
 
-    private fun sortList(stationName: String) {
+    fun sortList(stationName: String) {
         if(list.isNotEmpty()) {
             list = list.sortedBy {
                 it.timeToStation
@@ -65,7 +65,7 @@ class MainPresenter(private var mainView: MainView?,
         }
     }
 
-    private fun calculateRemainingSeconds(expectedArrival: String): Int {
+    fun calculateRemainingSeconds(expectedArrival: String): Int {
         val cal = DateUtil.convertToCalendar(expectedArrival)
         cal.add(Calendar.HOUR_OF_DAY, 1)
         val currentCal = Calendar.getInstance()

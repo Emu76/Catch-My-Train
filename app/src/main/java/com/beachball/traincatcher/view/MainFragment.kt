@@ -28,19 +28,19 @@ class MainFragment : Fragment(), MainView {
                 getString(R.string.tfl_app_id), getString(R.string.tfl_app_key))
 
         btn_canonbury.setOnClickListener {
-            presenter.getArrivals("910GCNNB", "Stratford")
+            presenter.getArrivals(getString(R.string.station_code_canonbury), getString(R.string.destination_stratford))
         }
 
         btn_canary_wharf.setOnClickListener {
-            presenter.getArrivals("9400ZZDLCAN1", "Stratford")
+            presenter.getArrivals(getString(R.string.station_code_canary_wharf), getString(R.string.destination_stratford))
         }
 
         btn_stratford.setOnClickListener {
-            presenter.getArrivals("9400ZZDLSTD1", "Stratford International")
+            presenter.getArrivals(getString(R.string.station_code_stratford), getString(R.string.destination_stratford_intl))
         }
 
         btn_stratford_intl.setOnClickListener {
-            presenter.getArrivals("940GZZDLSIT", "Woolwich")
+            presenter.getArrivals(getString(R.string.station_code_stratford_intl), getString(R.string.destination_woolwich))
         }
     }
 

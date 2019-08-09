@@ -13,6 +13,15 @@
     <string name="countdown_cancel">Cancel countdown</string>
     <string name="countdown_channel">Countdown notifications</string>
 
+    <string name="destination_stratford">Stratford</string>
+    <string name="destination_stratford_intl">Stratford International</string>
+    <string name="destination_woolwich">Woolwich</string>
+
+    <string name="station_code_canonbury">910GCNNB</string>
+    <string name="station_code_canary_wharf">9400ZZDLCAN1</string>
+    <string name="station_code_stratford">9400ZZDLSTD1</string>
+    <string name="station_code_stratford_intl">940GZZDLSIT</string>
+
     <string name="tfl_app_id">_</string>
     <string name="tfl_app_key">_</string>
 </resources>

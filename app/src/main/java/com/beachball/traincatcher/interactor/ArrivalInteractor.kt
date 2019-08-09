@@ -22,7 +22,7 @@ class ArrivalInteractor {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         client = OkHttpClient.Builder().addInterceptor(interceptor).build()
         retrofit = Retrofit.Builder()
-                .baseUrl("https://api.tfl.gov.uk/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
@@ -41,5 +41,9 @@ class ArrivalInteractor {
                 }
                 .map { it }
                 .toList()
+    }
+
+    companion object {
+        const val BASE_URL = "https://api.tfl.gov.uk/"
     }
 }

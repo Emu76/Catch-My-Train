@@ -1,13 +1,13 @@
 package com.beachball.traincatcher.view
 
 import android.content.Intent
-import android.os.*
-import android.support.v4.app.Fragment
-import android.view.ViewGroup
+import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import com.beachball.traincatcher.presenter.MainPresenter
+import android.view.ViewGroup
 import com.beachball.traincatcher.R
+import com.beachball.traincatcher.presenter.MainPresenter
 import com.beachball.traincatcher.service.CountdownService
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 class MainFragment : Fragment(), MainView {
 
     private lateinit var presenter: MainPresenter
+    //private val viewModel: MainFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
